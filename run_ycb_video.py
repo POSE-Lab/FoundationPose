@@ -90,7 +90,7 @@ def run_pose_estimation():
 
   reader_tmp = YcbVideoReader(video_dirs[0])
   glctx = dr.RasterizeCudaContext()
-  mesh_tmp = trimesh.primitives.Box(extents=np.ones((3)), transform=np.eye(4))
+  mesh_tmp = trimesh.primitives.Box(extents=np.ones((3)), transform=np.eye(4)).to_mesh()
   est = FoundationPose(model_pts=mesh_tmp.vertices.copy(), model_normals=mesh_tmp.vertex_normals.copy(), symmetry_tfs=None, mesh=mesh_tmp, scorer=None, refiner=None, glctx=glctx, debug_dir=debug_dir, debug=debug)
 
   ob_ids = reader_tmp.ob_ids
@@ -111,8 +111,8 @@ def run_pose_estimation():
       video_id = reader.get_video_id()
 
       for i in range(len(reader.color_files)):
-        if not reader.is_keyframe(i):
-          continue
+        #if not reader.is_keyframe(i):
+        #  continue
         args.append((reader, [i], est, debug, ob_id, 0))
 
     est.reset_object(model_pts=mesh.vertices.copy(), model_normals=mesh.vertex_normals.copy(), symmetry_tfs=symmetry_tfs, mesh=mesh)
@@ -126,7 +126,7 @@ def run_pose_estimation():
         for id_str in out[video_id]:
           res[video_id][id_str][ob_id] = out[video_id][id_str][ob_id]
 
-  with open(f'{opt.debug_dir}/ycbv_res.yml','w') as ff:
+  with open(f'{opt.debug_dir}/ycbv_res_2nd_try.yml','w') as ff:
     yaml.safe_dump(make_yaml_dumpable(res), ff)
 
 
